@@ -1,4 +1,5 @@
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 venv/Scripts/activate
+
 uvicorn main_FastAPI:app --reload --host  127.0.0.1 --port 33033
 
