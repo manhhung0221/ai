@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey,Date,Float
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship,sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from manage_engine import engine_stockDB
 Base = declarative_base()
@@ -51,5 +52,30 @@ class Report(Base):
 
     # Many-to-one: Nhiều report thuộc về một source_report
     source = relationship("SourceReport", back_populates="reports")
+class ResearchReport(Base):
+    __tablename__ = "research_report"
+    __table_args__ = {"schema": "info_market"}
+    
+    report_id = Column(String(100), primary_key=True, nullable=False)
+    ticker = Column(String(20), nullable=True)
+    publish_date = Column(Date, nullable=True)
+    rating = Column(String(50), nullable=True)
+    target_price = Column(Float, nullable=True)
+    content_json = Column(JSONB, nullable=True)
+    content=Column(Text, nullable=True)
+SessionLocal = sessionmaker(
+    autocommit=False,  # Không tự động commit các thay đổi
+    autoflush=False,   # Không tự động gửi các thay đổi trước khi truy vấn
+    bind=engine        # Liên kết session với engine cụ thể
+)
+from contextlib import contextmanager
+@contextmanager
+def get_Info():
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        print("📦 Closing DB session Intra...")
+        session.close()
 # Tạo bảng nếu chưa có
 Base.metadata.create_all(engine)
