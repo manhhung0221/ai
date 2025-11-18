@@ -229,8 +229,12 @@ def _build_top_stocks(
     for meta in members:
         symbol = meta["symbol"]
         net_value = ticker_flows.get(symbol)
-        if net_value is None or abs(net_value) < THREADSOLD_VALUE_STOCK_SECTOR:
-            continue
+        if isPossitive:
+            if net_value is None or net_value<0 or abs(net_value) < THREADSOLD_VALUE_STOCK_SECTOR:
+                continue
+        else:
+            if net_value is None or net_value>0 or abs(net_value) < THREADSOLD_VALUE_STOCK_SECTOR:
+                continue
         ranked.append(
             {
                 "symbol": symbol,
